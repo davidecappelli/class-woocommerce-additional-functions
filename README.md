@@ -1,1 +1,1 @@
-# class-woocommerce-additional-functions
+# Additional/Helper Functions for WooCommerce
