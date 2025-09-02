@@ -1,13 +1,15 @@
-<?php namespace DavideCappelli\WP_Parent_Theme\Integrations;
+<?php namespace DavideCappelli\WP_Classic_Parent_Theme\Integrations;
 
 class WoocommerceAdditionalFunctions {
     public static $class_shortname;
 
+    
+    
     public static function getAttributesIdsByProducts($product_ids = [], $sep = ' ') : NULL|array {
         global $wpdb;
         if(isset($product_ids) && !empty($product_ids)){  // Selected Products (Published / Not Published | In Stock / Out Of Stock)
             if(filter_var($product_ids,FILTER_VALIDATE_INT)){
-                $product_ids = (int) $product_ids;
+                $product_ids                            = (int) $product_ids;
             }
             if(is_int($product_ids) && function_exists('wc_get_product') && function_exists('wc_attribute_taxonomy_id_by_name')){ // Single Product (ID provided)
                 self::getAttributesIdsByProducts([(int) $product_ids]); // Recursion
@@ -16,12 +18,12 @@ class WoocommerceAdditionalFunctions {
             }elseif(is_array($product_ids)){    // Multiple Products (Array of IDs provided)
                 $wc_product_ids = !empty($product_ids) ? array_filter(array_map('intval', array_map('trim', $product_ids))) : [];
                 if(empty($wc_product_ids)) return NULL;
-                $statement  = $wpdb->prepare('SELECT DISTINCT '.$wpdb->prefix.'postmeta.meta_value FROM '.$wpdb->prefix.'posts LEFT JOIN '.$wpdb->prefix.'postmeta ON '.$wpdb->prefix.'posts.ID = '.$wpdb->prefix.'postmeta.post_id WHERE '.$wpdb->prefix.'posts.post_type = "product" AND '.$wpdb->prefix.'posts.ID IN(%s) AND '.$wpdb->prefix.'postmeta.meta_key = "_product_attributes"', implode(',', $wc_product_ids));
+                $statement                              = $wpdb->prepare('SELECT DISTINCT '.$wpdb->prefix.'postmeta.meta_value FROM '.$wpdb->prefix.'posts LEFT JOIN '.$wpdb->prefix.'postmeta ON '.$wpdb->prefix.'posts.ID = '.$wpdb->prefix.'postmeta.post_id WHERE '.$wpdb->prefix.'posts.post_type = "product" AND '.$wpdb->prefix.'posts.ID IN(%s) AND '.$wpdb->prefix.'postmeta.meta_key = "_product_attributes"', implode(',', $wc_product_ids));
             }else{
                 return NULL;
             }
         }else{  // All Products (Published / Not Published | In Stock / Out Of Stock)
-            $statement  = $wpdb->prepare('SELECT DISTINCT '.$wpdb->prefix.'postmeta.meta_value FROM '.$wpdb->prefix.'posts LEFT JOIN '.$wpdb->prefix.'postmeta ON '.$wpdb->prefix.'posts.ID = '.$wpdb->prefix.'postmeta.post_id WHERE '.$wpdb->prefix.'posts.post_type = "%s" AND '.$wpdb->prefix.'postmeta.meta_key = "_product_attributes"', 'product');
+            $statement                                  = $wpdb->prepare('SELECT DISTINCT '.$wpdb->prefix.'postmeta.meta_value FROM '.$wpdb->prefix.'posts LEFT JOIN '.$wpdb->prefix.'postmeta ON '.$wpdb->prefix.'posts.ID = '.$wpdb->prefix.'postmeta.post_id WHERE '.$wpdb->prefix.'posts.post_type = "%s" AND '.$wpdb->prefix.'postmeta.meta_key = "_product_attributes"', 'product');
         }
         $wc_products_postmeta_attributes                = $wpdb->get_col($statement);
         if(empty($wc_products_postmeta_attributes)) return NULL; // Results are empty
@@ -134,6 +136,6 @@ class WoocommerceAdditionalFunctions {
 }
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
-if(is_plugin_active('woocommerce/woocommerce.php')){
-    new \DavideCappelli\WP_Parent_Theme\Integrations\WoocommerceAdditionalFunctions;
+if(is_plugin_active('woocommerce/woocommerce.php')){    // Auto-Instantiation
+    new \DavideCappelli\WP_Classic_Parent_Theme\Integrations\WoocommerceAdditionalFunctions;
 }
