@@ -3,7 +3,7 @@
 class WoocommerceAdditionalFunctions {
     public static $class_shortname;
 
-    
+     /*** ATTRIBUTES ***/   
     
     public static function getAttributesIdsByProducts($product_ids = [], $sep = ' ') : NULL|array {
         global $wpdb;
